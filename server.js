@@ -21,3 +21,4 @@ const db = mysql.createConnection(
         database: 'employees_db'
     }
 );
+

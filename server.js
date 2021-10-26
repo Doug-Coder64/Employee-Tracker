@@ -25,12 +25,12 @@ function start() {
             name: "option", 
             choices: [
                     "View All Employees", 
-                    "View All Employees by Manager", 
-                    "View All Employees by Department",
+                    "View All Departments", 
+                    "View All Roles",
+                    "Add Departments",
+                    "Add Role",
                     "Add Employee",
-                    "Remove Employee",
                     "Update Employee Role",
-                    "Update Employee Manager"
             ]
         }
     ]).then(function(result) {
@@ -41,17 +41,17 @@ function start() {
                 console.log("Viewing employees");
                 viewAllEmployees();
                 break;
-            case "View All Employees by Manager":
+            case "View All Departments":
                 break;
-            case "View All Employees by Department":
+            case "View All Roles":
+                break;
+            case "Add Departments":
+                break;
+            case "Add Role":
                 break;
             case "Add Employee":
                 break;
-            case "Remove Employee":
-                break;
             case "Update Employee Role":
-                break;
-            case "Update Employee Manager":
                 break;
         }
     })
@@ -59,11 +59,13 @@ function start() {
 
 function viewAllEmployees(){
     
-    let query =  db.query(`SELECT employee.first_name, employee.last_name, role.title, role.salary, department.name, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id;`, function(err, res) {
+    let query =  db.query(`SELECT employee.first_name, employee.last_name, role.title, role.salary, department.name, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id;`, 
+    function(err, res) {
         if(err) throw err;
         console.table(res);
         start();
     });
 }
+
 
 start();

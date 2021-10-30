@@ -51,6 +51,7 @@ function start() {
                 addDepartment();
                 break;
             case "Add Role":
+                addRole();
                 break;
             case "Add Employee":
                 break;
@@ -98,6 +99,23 @@ function addDepartment() {
         }
     ]).then(function(res) {
         let query = db.query(`INSERT INTO department (name) VALUES ('${res.name}')`, 
+        function(err){
+            if(err) throw err;
+            console.table(res);
+            start();
+        });
+    });
+}
+
+function addRole(){
+    inquirer.prompt([
+        {
+            name: "role",
+            type: "input",
+            message: "Enter new Role:"
+        }
+    ]).then(function(res) {
+        let query = db.query(`INSERT INTO role (title) VALUES ('${res.role}')`, 
         function(err){
             if(err) throw err;
             console.table(res);

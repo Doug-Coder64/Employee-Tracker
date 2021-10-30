@@ -18,6 +18,8 @@ const db = mysql.createConnection(
 );
 
 function start() {
+    selectEmployee(); //Prefills Array with employee names
+    selectRole(); //prefills Array with current roles
     inquirer.prompt([
         {
             type: 'list',
@@ -57,6 +59,7 @@ function start() {
                 addEmployee();
                 break;
             case "Update Employee Role":
+                updateEmployeeRole();
                 break;
         }
     })
@@ -108,6 +111,7 @@ function addDepartment() {
     });
 }
 
+//add role to database
 function addRole(){
     inquirer.prompt([
         {
@@ -147,7 +151,7 @@ function addEmployee(){
             name: 'manager',
             type: 'list',
             message: 'Enter employees Manager',
-            choices: selectEmployeesManager()
+            choices: selectEmployee() //allows any employee to be manager
         }, 
         {
             name: 'role', 
@@ -160,7 +164,7 @@ function addEmployee(){
         {
             first_name: res.first_name, 
             last_name: res.last_name,
-            manager_id: selectEmployeesManager().indexOf(res.manager)+1,
+            manager_id: selectEmployee().indexOf(res.manager)+1,
             role_id: selectRole().indexOf(res.role)+1
         },
         function(err, res) {
@@ -171,9 +175,36 @@ function addEmployee(){
     });
 }
 
-//lists all employees so you can assign them as managers
+
+function updateEmployeeRole(){
+    inquirer.prompt([
+        {
+            name: 'employee',
+            type: 'list',
+            message: 'Select employee to update',
+            choices: selectEmployee()
+        },
+        {
+            name: 'role',
+            type: 'list',
+            message: 'Enter employees new Role',
+            choices: selectRole()
+        }
+    ]).then(function(res){
+        db.query(`UPDATE employee set employee.role_id = ${selectRole().indexOf(res.role)+1} WHERE ?`,
+        {
+            last_name: res.employee.split(' ')[1]
+        },
+        function(err) {
+            if(err) throw err;
+            start();
+        });
+    });
+}
+
+//allows you to select any employee
 let managers = [];
-function selectEmployeesManager() {
+function selectEmployee() {
     db.query("SELECT first_name, last_name FROM employee", function(err,res){
         for(let i=0; i <res.length; i++){
             managers.push(res[i].first_name + " " + res[i].last_name);

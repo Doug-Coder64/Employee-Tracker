@@ -17,7 +17,10 @@
 
   
 
+  ## Usage
   
+  
+![Untitled_ Oct 29, 2021 10_57 PM](https://user-images.githubusercontent.com/85598391/139519478-cbc1b00c-e8e3-47c0-806d-b71b645c3b44.gif)
 
   
 

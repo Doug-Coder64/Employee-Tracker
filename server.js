@@ -54,6 +54,7 @@ function start() {
                 addRole();
                 break;
             case "Add Employee":
+                addEmployee();
                 break;
             case "Update Employee Role":
                 break;
@@ -82,7 +83,7 @@ function viewAllDepartments() {
 
 //Lists table of roles 
 function viewAllRoles() {
-    let query = db.query('SELECT title AS Roles FROM role', function(err, res) {
+    let query = db.query('SELECT title AS Roles, salary AS Salary FROM role', function(err, res) {
         if(err) throw err;
         console.table(res);
         start();
@@ -113,15 +114,84 @@ function addRole(){
             name: "role",
             type: "input",
             message: "Enter new Role:"
+        },
+        {
+            name: "salary",
+            type: "input",
+            message: "Type salary for this new role"
         }
     ]).then(function(res) {
-        let query = db.query(`INSERT INTO role (title) VALUES ('${res.role}')`, 
+        let query = db.query(`INSERT INTO role (title, salary) VALUES ('${res.role}', '${res.salary}')`,
         function(err){
             if(err) throw err;
             console.table(res);
             start();
         });
     });
+}
+
+//adds employee to db
+function addEmployee(){
+    inquirer.prompt([
+        {
+            name: 'first_name',
+            type: 'input',
+            message: 'Enter Employees First name'
+        },
+        {
+            name: 'last_name',
+            type: 'input',
+            message: 'Enter Employees Last name'
+        },
+        {
+            name: 'manager',
+            type: 'list',
+            message: 'Enter employees Manager',
+            choices: selectEmployeesManager()
+        }, 
+        {
+            name: 'role', 
+            type: 'list',
+            message: 'Enter Role for this Employee',
+            choices: selectRole()
+        }
+    ]).then(function(res){
+        db.query("INSERT INTO employee SET ?",
+        {
+            first_name: res.first_name, 
+            last_name: res.last_name,
+            manager_id: selectEmployeesManager().indexOf(res.manager)+1,
+            role_id: selectRole().indexOf(res.role)+1
+        },
+        function(err, res) {
+            if(err) throw err;
+            console.table(res);
+            start();
+        });
+    });
+}
+
+//lists all employees so you can assign them as managers
+let managers = [];
+function selectEmployeesManager() {
+    db.query("SELECT first_name, last_name FROM employee", function(err,res){
+        for(let i=0; i <res.length; i++){
+            managers.push(res[i].first_name + " " + res[i].last_name);
+        }
+    });
+    return managers;
+}
+
+//lists all the roles available so you can assign them to employee
+let roles = [];
+function selectRole() {
+    db.query("Select title from role", function(err,res){
+        if(err) throw err;
+        for(let i = 0; i < res.length; i++) {
+            roles.push(res[i].title);
+        }
+    })
+    return roles;
 }
 
 start();

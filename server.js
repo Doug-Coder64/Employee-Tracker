@@ -42,6 +42,7 @@ function start() {
                 viewAllEmployees();
                 break;
             case "View All Departments":
+                viewAllDepartments();
                 break;
             case "View All Roles":
                 break;
@@ -58,9 +59,16 @@ function start() {
 }
 
 function viewAllEmployees(){
-    
-    let query =  db.query(`SELECT employee.first_name, employee.last_name, role.title, role.salary, department.name, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id;`, 
+    let query =  db.query(`SELECT employee.first_name AS 'First Name', employee.last_name AS 'Last Name', role.title, role.salary, department.name AS Department, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id;`, 
     function(err, res) {
+        if(err) throw err;
+        console.table(res);
+        start();
+    });
+}
+
+function viewAllDepartments() {
+    let query = db.query(`SELECT name AS Department FROM department`, function(err, res) {
         if(err) throw err;
         console.table(res);
         start();

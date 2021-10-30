@@ -48,6 +48,7 @@ function start() {
                 viewAllRoles();
                 break;
             case "Add Departments":
+                addDepartment();
                 break;
             case "Add Role":
                 break;
@@ -59,6 +60,7 @@ function start() {
     })
 }
 
+//lists employees, their role, department and and manager
 function viewAllEmployees(){
     let query =  db.query(`SELECT employee.first_name AS 'First Name', employee.last_name AS 'Last Name', role.title, role.salary, department.name AS Department, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id left join employee e on employee.manager_id = e.id;`, 
     function(err, res) {
@@ -68,6 +70,7 @@ function viewAllEmployees(){
     });
 }
 
+//lists table of departments
 function viewAllDepartments() {
     let query = db.query(`SELECT name AS Department FROM department`, function(err, res) {
         if(err) throw err;
@@ -76,11 +79,30 @@ function viewAllDepartments() {
     });
 }
 
+//Lists table of roles 
 function viewAllRoles() {
     let query = db.query('SELECT title AS Roles FROM role', function(err, res) {
         if(err) throw err;
         console.table(res);
         start();
+    });
+}
+
+//Adds department to sql
+function addDepartment() {
+    inquirer.prompt([
+        {
+            name: "name",
+            type: "input",
+            message: "Enter new Departments name:"
+        }
+    ]).then(function(res) {
+        let query = db.query(`INSERT INTO department (name) VALUES ('${res.name}')`, 
+        function(err){
+            if(err) throw err;
+            console.table(res);
+            start();
+        });
     });
 }
 

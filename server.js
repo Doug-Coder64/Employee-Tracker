@@ -45,6 +45,7 @@ function start() {
                 viewAllDepartments();
                 break;
             case "View All Roles":
+                viewAllRoles();
                 break;
             case "Add Departments":
                 break;
@@ -75,5 +76,12 @@ function viewAllDepartments() {
     });
 }
 
+function viewAllRoles() {
+    let query = db.query('SELECT title AS Roles FROM role', function(err, res) {
+        if(err) throw err;
+        console.table(res);
+        start();
+    });
+}
 
 start();
